@@ -1,0 +1,14 @@
+{
+  "name": "claude-memory-health",
+  "version": "1.0.0",
+  "description": "Scripts for auditing and maintaining Claude Code's MEMORY.md index",
+  "scripts": {
+    "check:bloat": "bun run scripts/check-bloat.ts",
+    "check:orphans": "bun run scripts/check-orphans.ts",
+    "schedule": "bun run scripts/scheduler.ts",
+    "schedule:dry": "DRY_RUN=true bun run scripts/scheduler.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}
