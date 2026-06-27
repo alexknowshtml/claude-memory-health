@@ -127,7 +127,7 @@ Output this exact structure (replace bracketed values):
 
 console.log(`[memory-scheduler] Invoking Claude for semantic demotion...`);
 
-const result = spawnSync("claude", ["--print", prompt], {
+const result = spawnSync("claude", ["--dangerously-skip-permissions", "--print", prompt], {
   encoding: "utf-8",
   timeout: 600_000, // 10 minutes
   maxBuffer: 10 * 1024 * 1024,
