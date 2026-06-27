@@ -11,11 +11,14 @@ Paste this into Claude Code to install:
 ```
 Install the memory-health skill from https://github.com/alexknowshtml/claude-memory-health:
 
-1. Copy SKILL.md to .claude/skills/memory-health/SKILL.md
-2. Copy the scripts/ folder to scripts/memory-health/ in the project root
-3. Copy cold-storage/ to cold-storage/ in the project root (or create your own domain files)
-4. Set MEMDIR to ~/.claude/projects/[your-project-name]/memory
-5. Set COLDDIR to [project-root]/cold-storage
+Clone or copy the repo into .claude/skills/memory-health/ in the project root.
+The scripts and cold-storage templates are included in the repo — no separate copies needed.
+
+To set up cold storage: copy .claude/skills/memory-health/cold-storage/ to cold-storage/
+in the project root as a starting point, then customize the domain files for your project.
+
+Set MEMDIR to ~/.claude/projects/[your-project-name]/memory
+Set COLDDIR to [project-root]/cold-storage
 
 Once installed, run /memory-health to audit the memory index.
 ```
@@ -44,19 +47,24 @@ The skill audits your index interactively. The scheduler runs Claude headlessly 
 
 ## What's Included
 
+Install the whole repo as `.claude/skills/memory-health/` — everything lives together.
+
 ```
-SKILL.md                    # /memory-health interactive audit skill
-scripts/
-  check-bloat.ts            # find sections with inline content that should be files
-  check-orphans.ts          # find memory files not referenced anywhere
-  scheduler.ts              # scheduled demotion via headless Claude invocation
-cold-storage/
-  _index.md                 # domain list with "when to load" trigger keywords
-  development.md            # example domain: build tools, debugging
-  infrastructure.md         # example domain: ports, certs, deployment
-  relationships.md          # example domain: communication preferences, contacts
-  projects.md               # example domain: decisions, constraints, milestones
+.claude/skills/memory-health/
+  SKILL.md                    # /memory-health interactive audit skill
+  scripts/
+    check-bloat.ts            # find sections with inline content that should be files
+    check-orphans.ts          # find memory files not referenced anywhere
+    scheduler.ts              # scheduled demotion via headless Claude invocation
+  cold-storage/               # template — copy to your project root and customize
+    _index.md                 # domain list with "when to load" trigger keywords
+    development.md            # example: build tools, debugging
+    infrastructure.md         # example: ports, certs, deployment
+    relationships.md          # example: communication preferences, contacts
+    projects.md               # example: decisions, constraints, milestones
 ```
+
+Your actual cold storage lives in your project root (`cold-storage/`), separate from the skill. The copies in the skill directory are templates to start from.
 
 ## Usage
 
@@ -65,7 +73,7 @@ cold-storage/
 /memory-health
 ```
 
-**Manual audit scripts:**
+**Manual audit scripts** (run from `.claude/skills/memory-health/`):
 ```bash
 bun run scripts/check-bloat.ts     # find inline content that should be extracted
 bun run scripts/check-orphans.ts   # find orphaned memory files
@@ -80,7 +88,7 @@ bun run scripts/scheduler.ts                # run for real
 **Schedule it:**
 ```bash
 # daily at 7am — demotes automatically when MEMORY.md exceeds threshold
-0 7 * * * cd /path/to/project && bun run scripts/scheduler.ts >> logs/memory-health.log 2>&1
+0 7 * * * cd /path/to/project/.claude/skills/memory-health && bun run scripts/scheduler.ts >> /path/to/project/logs/memory-health.log 2>&1
 ```
 
 ## Configuration

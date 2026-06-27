@@ -11,22 +11,21 @@ Audit Claude Code's MEMORY.md index. Catches size creep, orphaned files, broken 
 
 ## Setup
 
-This skill assumes you're using Claude Code's file-based memory system:
+This skill is installed at `.claude/skills/memory-health/` in your project. Scripts run from that directory.
 
+Assumes Claude Code's file-based memory system:
 ```
 ~/.claude/projects/<your-project>/memory/
 ├── MEMORY.md          # index file — one pointer per memory
 ├── feedback_*.md      # individual memory files
-├── project_*.md
 └── ...
 ```
 
-Set your memory directory:
+Set your memory directory (or hard-code in scripts):
 ```bash
 MEMDIR="$HOME/.claude/projects/$(basename $PWD)/memory"
+COLDDIR="$(git rev-parse --show-toplevel)/cold-storage"  # project root cold storage
 ```
-
-Or hard-code it if your project has a fixed path.
 
 ---
 
