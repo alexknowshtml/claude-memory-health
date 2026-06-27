@@ -66,6 +66,51 @@ Install the whole repo as `.claude/skills/memory-health/` — everything lives t
 
 Your actual cold storage lives in your project root (`cold-storage/`), separate from the skill. The copies in the skill directory are templates to start from.
 
+## Getting Started
+
+**1. Find your memory directory.**
+
+Claude Code names project memory dirs after the mangled absolute path — not just the folder name. Run this to see what exists:
+
+```bash
+ls ~/.claude/projects/
+```
+
+Pick the entry that matches your project and set `MEMDIR` to it:
+
+```bash
+export MEMDIR=~/.claude/projects/-home-you-myproject/memory
+```
+
+**2. Set up cold storage.**
+
+Copy the templates from the skill to your project root:
+
+```bash
+cp -r .claude/skills/memory-health/cold-storage/ cold-storage/
+```
+
+Then customize the domain files for your project. Set `COLDDIR`:
+
+```bash
+export COLDDIR=/path/to/your/project/cold-storage
+```
+
+**3. Do a dry run.**
+
+```bash
+cd .claude/skills/memory-health
+DRY_RUN=true MEMDIR=$MEMDIR COLDDIR=$COLDDIR bun run scripts/scheduler.ts
+```
+
+You'll see the current line count and whether it would trigger demotion. No files are touched.
+
+**4. Run for real when ready.**
+
+```bash
+MEMDIR=$MEMDIR COLDDIR=$COLDDIR bun run scripts/scheduler.ts
+```
+
 ## Usage
 
 **Interactive audit** — run from Claude Code:
@@ -85,10 +130,12 @@ DRY_RUN=true bun run scripts/scheduler.ts   # check line count, skip demotion
 bun run scripts/scheduler.ts                # run for real
 ```
 
+> **Note:** The scheduler invokes Claude with `--dangerously-skip-permissions`. This is intentional — scheduled demotion is a pre-authorized autonomous operation. Claude reads memory files, classifies them, and writes to cold storage without interactive prompts. Review the classification rules in `scripts/scheduler.ts` before setting up a cron job.
+
 **Schedule it:**
 ```bash
 # daily at 7am — demotes automatically when MEMORY.md exceeds threshold
-0 7 * * * cd /path/to/project/.claude/skills/memory-health && bun run scripts/scheduler.ts >> /path/to/project/logs/memory-health.log 2>&1
+0 7 * * * cd /path/to/project/.claude/skills/memory-health && MEMDIR=~/.claude/projects/your-project/memory COLDDIR=/path/to/project/cold-storage bun run scripts/scheduler.ts >> /path/to/project/logs/memory-health.log 2>&1
 ```
 
 ## Configuration
